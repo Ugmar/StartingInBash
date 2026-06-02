@@ -1,0 +1,47 @@
+#!/bin/bash
+
+answer(){
+	result=$?
+	if [ $result -eq 0 ];then
+		echo "Files are equal"
+	elif [ $result -eq 1 ];then
+		echo "Files aren not equal"
+	elif [ $result -eq 2 ];then
+		echo "Files not exists"
+	elif [ $result -eq 3 ];then
+		echo "Unknown 3rd argument"
+	elif [ $result -eq 4 ];then
+		echo "Invalid number of arguments"
+	fi
+	number_test=$(($number_test+1))
+}
+
+number_test=1
+for t in $(ls ./tests);do
+	echo "Тест $number_test"	
+	./comparator4 ./tests/$t/file1.txt ./tests/$t/file2.txt -v
+	answer
+done
+for t in $(ls ./tests);do
+	echo "Тест $number_test"	
+	./comparator4 ./tests/$t/file1.txt ./tests/$t/file2.txt
+	answer
+done
+echo "Тест $number_test"
+./comparator4 ./tests/test_all_dot_eq/file1.txt error -v
+answer
+echo "Тест $number_test"
+./comparator4 eror.txt error.txt
+answer
+echo "Тест $number_test"
+./comparator4 ./tests/test_all_dot_eq/file1.txt ./tests/test_all_dot_eq/file2.txt --verbose
+answer
+echo "Тест $number_test"
+./comparator4 ./tests/test_all_dot_eq/file1.txt ./tests/test_all_dot_eq/file2.txt 234
+answer
+echo "Тест $number_test"
+./comparator4 ./tests/test_all_dot_eq/file1.txt
+answer
+echo "Тест $number_test"
+./comparator4 ./tests/test_all_dot_eq/file1.txt ./tests/test_all_dot_eq/file2.txt -v ./tests/test_error/file1.txt
+answer

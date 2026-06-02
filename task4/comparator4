@@ -1,0 +1,33 @@
+#!/bin/bash
+if [ $# == 2 -o $# == 3 ];then
+	if [ -f $1 -a -f $2 ];then
+		file1=$1
+		file2=$2
+	else
+		exit 2
+	fi
+	verbose=0
+	if [ -n "$3" ]; then
+		if [ "$3" == "-v" -o "$3" == "--verbose" ];then
+			verbose=1
+		else
+			exit 3
+		fi
+	fi
+else
+	exit 4
+fi
+res_file1=$(grep -Eo "[+-]?[0-9]+\.[0-9]+([Ee][+-]?[0-9]+)?" $file1)
+res_file2=$(grep -Eo "[+-]?[0-9]+\.[0-9]+([Ee][+-]?[0-9]+)?" $file2)
+
+if [ $verbose -eq 1 ];then
+	echo "Резульат анализа первого файла" 
+	echo "$res_file1"
+	echo "Результат анализа второго файла" 
+	echo "$res_file2"
+fi
+if [ "$res_file1" == "$res_file2" ];then
+	exit 0
+else
+	exit 1
+fi

@@ -1,0 +1,41 @@
+#!/bin/bash
+if [ $# == 2 -o $# == 3 ];then
+	if [ -f $1 -a -f $2 ];then
+		file1=$(cat $1)
+		file2=$(cat $2)
+	else
+		exit 2
+	fi
+	verbose=0
+	if [ -n "$3" ]; then
+		if [ "$3" == "-v" -o "$3" == "--verbose" ]; then
+			verbose=1
+		else
+			exit 3
+		fi
+	fi
+else
+	exit 4
+fi
+
+for el in $file1; do
+	if echo "$el" | grep -Eq "^[+-]?[0-9]+(\)?$" ;then
+		res_file1="$res_file1 ${el%$'\r'}"
+	fi
+done
+
+for el in $file2; do
+	if echo "$el" | grep -Eq "^[+-]?[0-9]+(\)?$";then
+		res_file2="$res_file2 ${el%$'\r'}"
+	fi
+done
+if [ $verbose -eq 1 ]; then
+	echo "Результат анализа первого файла" "$res_file1"
+	echo "Результат анализа второго файла" "$res_file2"
+fi
+if [[ "$res_file1" == "$res_file2" ]]; then
+	exit 0
+else
+	exit 1
+fi
+	

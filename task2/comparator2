@@ -1,0 +1,40 @@
+#!/bin/bash
+
+if [ $# == 2 -o $# == 3 ];then
+	if [ -f $1 -a -f $2 ]; then
+		file1=$1
+		file2=$2
+	else
+		exit 2
+	fi
+	verbose=0
+	if [ -n "$3" ]; then
+		if [ "$3" == "-v" -o "$3" == "--verbose" ];then
+			verbose=1
+		else
+			exit 3
+		fi
+	fi
+else
+	exit 4
+fi
+index_string1=$(($(grep -nm1 'string:.*' "$file1" | grep -Eo "^[0-9]+")+1))
+after_string1=$(grep -om1 "string:.*" "$file1")
+tail_after_string1=$(tail -n +$index_string1 $file1)
+
+index_string2=$(($(grep -nm1 'string:.*' "$file2" | grep -Eo "^[0-9]+")+1))
+after_string2=$(grep -om1 "string:.*" "$file2")
+tail_after_string2=$(tail -n +$index_string2 $file2)
+if [ $verbose -eq 1 ];then
+	echo "Результат анализа первого файла:"
+	echo "$after_string1"
+	echo "$tail_after_string1"
+	echo "Результат анализа второго файла:"
+	echo "$after_string2"
+	echo "$tail_after_string2"
+fi
+if [ "$after_string1" == "$after_string2" -a "$tail_after_string1" == "$tail_after_string2" ];then
+	exit 0
+else
+	exit 1
+fi
